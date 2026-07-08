@@ -18,6 +18,8 @@ jobs:
         run: flutter create --platforms=android --project-name=pistachio_vpn .
       - name: Get packages
         run: flutter pub get
+      - name: Ensure minSdkVersion 21
+        run: sed -i 's/flutter.minSdkVersion/21/' android/app/build.gradle
       - name: Generate launcher icons
         run: flutter pub run flutter_launcher_icons
       - name: Build APK
