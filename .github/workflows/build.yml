@@ -16,6 +16,8 @@ jobs:
           channel: 'stable'
       - name: Generate platform folders
         run: flutter create --platforms=android --project-name=pistachio_vpn .
+      - name: Fix Kotlin version
+        run: sed -i '/org.jetbrains.kotlin.android/c\    id "org.jetbrains.kotlin.android" version "1.9.22" apply false' android/settings.gradle
       - name: Get packages
         run: flutter pub get
       - name: Ensure minSdkVersion 21
