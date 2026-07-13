@@ -22,6 +22,43 @@ jobs:
         run: flutter pub get
       - name: Ensure minSdkVersion 21
         run: sed -i 's/flutter.minSdkVersion/21/' android/app/build.gradle
+      - name: Patch AndroidManifest for WireGuard VPN service
+        run: |
+          python3 - <<'EOF'
+          path = "android/app/src/main/AndroidManifest.xml"
+          with open(path, "r", encoding="utf-8") as f:
+              content = f.read()
+
+          extra_permissions = (
+              '<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>\n'
+              '    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>\n'
+              '    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n'
+          )
+          if "ACCESS_NETWORK_STATE" not in content:
+              content = content.replace(
+                  '<uses-permission android:name="android.permission.INTERNET"/>',
+                  '<uses-permission android:name="android.permission.INTERNET"/>\n    ' + extra_permissions,
+                  1,
+              )
+
+          vpn_service = (
+              '    <service\n'
+              '        android:name="com.wireguard.android.backend.GoBackend$VpnService"\n'
+              '        android:exported="false"\n'
+              '        android:permission="android.permission.BIND_VPN_SERVICE">\n'
+              '        <intent-filter>\n'
+              '            <action android:name="android.net.VpnService"/>\n'
+              '        </intent-filter>\n'
+              '    </service>\n'
+          )
+          if "GoBackend" not in content:
+              content = content.replace("</application>", vpn_service + "</application>", 1)
+
+          with open(path, "w", encoding="utf-8") as f:
+              f.write(content)
+          print("AndroidManifest patched successfully")
+          print(content)
+          EOF
       - name: Generate launcher icons
         run: flutter pub run flutter_launcher_icons
       - name: Build APK
