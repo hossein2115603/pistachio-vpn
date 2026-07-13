@@ -133,7 +133,7 @@ class _PistachioVpnScreenState extends State<PistachioVpnScreen>
 
   Future<void> _doInit() async {
     try {
-      await wireguard.initialize(interfaceName: kInterfaceName, vpnName: 'Pistachio VPN');
+      await wireguard.initialize(interfaceName: kInterfaceName);
       _initialized = true;
       _stageSub = wireguard.vpnStageSnapshot.listen((event) {
         final mapped = _mapStage(event.toString());
