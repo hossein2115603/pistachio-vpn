@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wireguard_flutter_plus/wireguard_flutter_plus.dart';
+import 'package:wireguard_flutter/wireguard_flutter.dart';
 
 void main() => runApp(const PistachioVpnApp());
 
